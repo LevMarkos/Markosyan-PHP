@@ -57,7 +57,7 @@ return [
             'channels' => explode(',', env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
-
+        
         'sevenchanges' => [
         'driver' => 'daily',
         'path' => storage_path('logs/model_changes.log'),
