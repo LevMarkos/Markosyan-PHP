@@ -16,7 +16,7 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Добавлено правило валидации для изображения
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ];
     }
 

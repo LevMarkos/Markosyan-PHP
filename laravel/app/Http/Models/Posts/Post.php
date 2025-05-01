@@ -28,5 +28,3 @@ class Post extends Model implements HasMedia
         $this->addMediaCollection('images');
     }
 }
-
-Найти еще
