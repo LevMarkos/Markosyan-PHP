@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Post\Services; 
+namespace App\Services\Posts; 
 
 use App\Models\Post; 
 use Log; 

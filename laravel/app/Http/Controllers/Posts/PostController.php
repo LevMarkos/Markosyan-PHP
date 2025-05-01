@@ -10,7 +10,7 @@ class PostController extends Controller
 {
     protected $postService;
 
-    public function __construct(\App\Post\Services\PostService $postService)
+    public function __construct(\App\Services\Posts\PostService $postService)
     {
         $this->postService = $postService;
     }
