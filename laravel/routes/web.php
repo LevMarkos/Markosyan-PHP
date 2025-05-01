@@ -19,3 +19,7 @@ Route::prefix('posts')->name('posts.')->group(function () {
     Route::put('/{id}', [PostController::class, 'update'])->name('update');
 });
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
