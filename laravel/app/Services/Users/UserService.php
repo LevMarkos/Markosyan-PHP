@@ -3,6 +3,7 @@
 namespace App\User\Services;
 
 use App\Models\User;
+use Log;
 
 class UserService
 {
@@ -13,11 +14,13 @@ class UserService
 
     public function createUser ($data)
     {
+        Log::channel('sevenchanges')->info('Создан новый пользователь'.json_encode($data));
         return User::create($data);
     }
 
     public function getUserById($id) 
     {
+        Log::channel('sevenchanges')->info('Поиск пользователя по ID: ' . $id);
         return User::findOrFail($id);
     }
 
@@ -25,6 +28,7 @@ class UserService
     {
         $user = $this->getUserById($id);
         $user->update($data);
+        Log::channel('sevenchanges')->info('Пользователь изменён: ' . json_encode($user));
         return $user;
     }
 }
