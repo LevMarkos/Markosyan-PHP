@@ -1,8 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+    @if ($post->hasMedia('images'))
+        <div>
+            <img src="{{ $post->getFirstMediaUrl('images') }}" alt="Изображение поста" style="max-width: 100%; height: auto;">
+        </div>
+    @endif
+
     <h1>{{ $post->title }}</h1>
     <p>{{ $post->content }}</p>
+
     <h2>Комментарии</h2>
     <form action="{{ route('comments.store', $post->id) }}" method="POST">
         @csrf
@@ -12,9 +19,11 @@
         </div>
         <button type="submit">Добавить комментарий</button>
     </form>
+    
     <ul>
         @foreach($post->comments as $comment)
             <li>{{ $comment->content }}</li>
         @endforeach
     </ul>
 @endsection
+

@@ -1,13 +1,15 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = ['user_id', 'title', 'content'];
 
@@ -20,20 +22,11 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
-    protected static function boot()
+
+    public function registerMediaCollections(): void
     {
-        parent::boot();
-
-        static::created(function ($post) {
-            Log::channel('sevenchanges')->info('Пост создан: ', $post->toArray());
-        });
-
-        static::updated(function ($post) {
-            Log::channel('sevenchanges')->info('Пост обновлен: ', $post->toArray());
-        });
-
-        static::deleted(function ($post) {
-            Log::channel('sevenchanges')->info('Пост удален: ', $post->toArray());
-        });
+        $this->addMediaCollection('images');
     }
 }
+
+Найти еще

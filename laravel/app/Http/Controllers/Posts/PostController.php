@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Posts;
 
 use App\Http\Controllers\Controller;
@@ -27,7 +28,12 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
-        $this->postService->createPost($request->validated());
+        $post = $this->postService->createPost($request->validated());
+
+        if ($request->hasFile('image')) {
+            $post->addMedia($request->file('image'))->toMediaCollection('images');
+        }
+
         return redirect()->route('posts.index');
     }
 
