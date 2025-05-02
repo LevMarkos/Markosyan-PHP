@@ -1,24 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
+
 <h1>Список постов</h1>
 
-@if(auth()->user()->role === 'admin' || auth()->user()->role === 'editor')
+@can('create', App\Models\Post::class)
     <a href="{{ route('posts.create') }}">Создать пост</a>
-@endif
+@endcan
 
 <ul>
-@foreach($posts as $post)
-    <li>
-        <a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a>
-        @if(auth()->user()->role === 'admin' || auth()->user()->role === 'editor')
-            - <a href="{{ route('posts.edit', $post->id) }}">Редактировать</a>
-        @endif
-    </li>
-@endforeach
+    @foreach($posts as $post)
+        <li>
+            <a href="{{ route('posts.show', $post->id) }}">{{ $post->title }}</a>
+            @can('update', $post)
+                - <a href="{{ route('posts.edit', $post->id) }}">Редактировать</a>
+            @endcan
+        </li>
+    @endforeach
 </ul>
 
-@if(auth()->user()->role === 'user' || auth()->user()->role === 'editor' || auth()->user()->role === 'admin')
+@if(auth()->user()->can('comment', App\Models\Post::class))
     <h2>Добавить комментарий</h2>
 @endif
+
 @endsection
