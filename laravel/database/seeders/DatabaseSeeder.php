@@ -14,5 +14,12 @@ class DatabaseSeeder extends Seeder
     public function run()
 {
     $this->call(RolesAndPermissionsSeeder::class);
+    User::factory(10)->create()->each(function ($user) {
+        $posts = \App\Models\Post::factory(3)->create(['user_id' => $user->id]);
+
+        foreach ($posts as $post) {
+            \App\Models\Comment::factory(5)->create(['post_id' => $post->id, 'user_id' => $user->id]);
+        }
+    });
 }
 }

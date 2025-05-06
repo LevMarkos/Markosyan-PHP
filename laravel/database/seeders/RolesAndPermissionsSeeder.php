@@ -10,7 +10,6 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run()
     {
-
         $permissions = [
             'create posts',
             'edit posts',
@@ -18,18 +17,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'list posts',
             'add comments',
         ];
-
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            if (!Permission::where('name', $permission)->exists()) {
+                Permission::create(['name' => $permission]);
+            }
         }
 
-        $adminRole = Role::create(['name' => 'Администратор']);
-        $editorRole = Role::create(['name' => 'Редактор']);
-        $userRole = Role::create(['name' => 'Пользователь']);
+        $adminRole = Role::firstOrCreate(['name' => 'Администратор']);
+        $editorRole = Role::firstOrCreate(['name' => 'Редактор']);
+        $userRole = Role::firstOrCreate(['name' => 'Пользователь']);
 
         $adminRole->givePermissionTo(Permission::all());
         $editorRole->givePermissionTo(['create posts', 'edit posts', 'view posts', 'list posts']);
         $userRole->givePermissionTo(['view posts', 'list posts', 'add comments']);
     }
 }
-
