@@ -4,7 +4,8 @@ namespace App\Services\Users;
 
 use App\Models\User;
 use App\Http\Resources\UserResource;
-use Log;
+use Illuminate\Support\Facades\Log;
+
 
 class UserService
 {
@@ -28,13 +29,14 @@ class UserService
         return new UserResource($user);
     }
 
-    public function updateUser($id, $data)
-    {
-        $user = $this->getUserById($id);
-        $user->update($data);
-        Log::channel('sevenchanges')->info('Пользователь изменён: ' . json_encode($user));
-        return new UserResource($user);
-    }
+    public function updateUser ($id, $data)
+{
+    $user = User::findOrFail($id);
+    $user->update($data);
+    Log::channel('sevenchanges')->info('Пользователь изменён: ' . json_encode($user));
+    return new UserResource($user);
+}
+
 
     public function deleteUser($id)
     {
