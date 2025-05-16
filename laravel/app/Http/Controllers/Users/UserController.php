@@ -4,44 +4,40 @@ namespace App\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest; 
-use App\Http\Resources\UserResource;
+use App\Services\Users\UserService;
 
 class UserController extends Controller
 {
     protected $userService;
 
-    public function __construct(\App\User\Services\UserService $userService)
+    public function __construct(UserService $userService)
     {
         $this->userService = $userService;
     }
 
     public function index()
     {
-        $users = $this->userService->getAllUsers();
-        return UserResource::collection($users);
+        return $this->userService->getAllUsers(); 
     }
 
     public function store(StoreUserRequest $request) 
     {
-        $user = $this->userService->createUser ($request->validated());
-        return new UserResource($user);
+        return $this->userService->createUser($request->validated());
     }
 
     public function show($id)
     {
-        $user = $this->userService->getUserById($id);
-        return new UserResource($user);
+        return $this->userService->getUserById($id); 
     }
 
     public function update(UpdateUserRequest $request, $id) 
     {
-        $user = $this->userService->updateUser ($id, $request->validated());
-        return new UserResource($user);
+        return $this->userService->updateUser($id, $request->validated());
     }
 
     public function destroy($id)
     {
-        $this->userService->deleteUser ($id);
+        $this->userService->deleteUser($id);
         return response()->json(null, 204);
     }
 }

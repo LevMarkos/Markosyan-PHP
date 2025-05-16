@@ -6,43 +6,40 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
+use App\Services\Posts\PostService;
 
 class PostController extends Controller
 {
     protected $postService;
 
-    public function __construct(\App\Services\Posts\PostService $postService)
+    public function __construct(PostService $postService)
     {
         $this->postService = $postService;
     }
 
     public function index()
     {
-        $posts = $this->postService->getAllPosts();
-        return PostResource::collection($posts);
+        return PostResource::collection($this->postService->getAllPosts());
     }
 
     public function store(StorePostRequest $request)
     {
-        $post = $this->postService->createPost($request->validated());
+        $postResource = $this->postService->createPost($request->validated());
 
         if ($request->hasFile('image')) {
-            $post->addMedia($request->file('image'))->toMediaCollection('images');
-        }
-
-        return new PostResource($post);
+    $postResource->addMedia($request->file('image'))->toMediaCollection('images');
+    $postResource->save();
+}
     }
 
     public function show($id)
     {
-        $post = $this->postService->getPostById($id);
-        return new PostResource($post);
+        return $this->postService->getPostById($id);
     }
 
     public function update(UpdatePostRequest $request, $id) 
     {
-        $post = $this->postService->updatePost($id, $request->validated());
-        return new PostResource($post);
+        return $this->postService->updatePost($id, $request->validated());
     }
 
     public function destroy($id)
