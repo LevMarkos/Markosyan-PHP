@@ -4,63 +4,58 @@ namespace App\Http\Controllers\Posts;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Posts\PostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Posts\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
     public function index()
-    {
-        $posts = Post::all();
-        return view('posts.index', compact('posts'));
-    }
+{
+    $posts = Post::with('user')->get();
+    $data = PostResource::collection($posts);
+    return response()->json($data);
+}
+
 
     public function create()
     {
         return view('posts.create');
     }
 
-    public function store(PostRequest $request)
+    public function show(Post $post): PostResource
+    {
+        $post->load(['user', 'comments.user']);
+        return new PostResource($post);
+    }
+
+    public function store(PostRequest $request): PostResource
     {
         $post = Post::create(array_merge($request->validated(), ['user_id' => Auth::id()]));
+        $this->handleImageUpload($request, $post);
 
-        if ($request->hasFile('image')) {
-            $post->addMedia($request->file('image'))->toMediaCollection('images');
-        }
-
-        return redirect()->route('posts.index')->with('success', 'Пост успешно создан!');
+        return new PostResource($post);
     }
 
-    public function show(Post $post)
-    {
-        return view('posts.show', compact('post'));
-    }
-
-    public function edit(Post $post)
-    {
-        return view('posts.create', compact('post'));
-    }
-
-    public function update(PostRequest $request, Post $post)
+    public function update(PostRequest $request, Post $post): PostResource
     {
         $post->update($request->validated());
+        $this->handleImageUpload($request, $post);
 
-        if ($request->hasFile('image')) {
-            $post->addMedia($request->file('image'))->toMediaCollection('images');
-        }
-
-        return redirect()->route('posts.index')->with('success', 'Пост успешно обновлён!');
+        return new PostResource($post);
     }
 
     public function destroy(Post $post)
     {
         $post->delete();
-        return redirect()->route('posts.index')->with('success', 'Пост успешно удалён!');
+        return response()->json(['message' => 'Пост успешно удалён!'], 200);
     }
 
-    public function head()
+    private function handleImageUpload(PostRequest $request, Post $post): void
     {
-        $posts = Post::all();
-        return view('head', compact('posts'));
+        if ($request->hasFile('image')) {
+            $post->addMedia($request->file('image'))->toMediaCollection('images');
+        }
     }
 }

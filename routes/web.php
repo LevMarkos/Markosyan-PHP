@@ -5,7 +5,7 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Posts\PostController;
 use Illuminate\Support\Facades\Route;
 
-
+// Пользователи
 Route::resource('users', UserController::class)->names([
     'index' => 'users.index',
     'create' => 'users.create',
@@ -16,7 +16,7 @@ Route::resource('users', UserController::class)->names([
     'destroy' => 'users.destroy',
 ]);
 
-
+// Посты
 Route::resource('posts', PostController::class)->names([
     'index' => 'posts.index',
     'create' => 'posts.create',
@@ -27,14 +27,14 @@ Route::resource('posts', PostController::class)->names([
     'destroy' => 'posts.destroy',
 ]);
 
-
+// Заголовки постов
 Route::get('posts/head', [PostController::class, 'head'])->name('posts.head');
 
-
-Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
-
+// Комментарии
+Route::get('posts/{post}/comments', [CommentController::class, 'index'])->name('posts.comments.index'); // Получение комментариев к посту
+Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store'); // Создание нового комментария
 
 Auth::routes();
-
-
+// Главная страница
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');

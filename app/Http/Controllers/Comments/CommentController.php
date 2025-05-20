@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Comments;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Comments\CommentRequest;
+use App\Http\Resources\CommentResource;
 use App\Models\Posts\Post;
 use App\Services\CommentService;
-use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
@@ -19,7 +19,7 @@ class CommentController extends Controller
 
     public function store(CommentRequest $request, Post $post)
     {
-        $this->commentService->store($request, $post);
-        return redirect()->route('posts.show', $post);
+        $comment = $this->commentService->store($request, $post);
+        return new CommentResource($comment->load('user'));
     }
 }

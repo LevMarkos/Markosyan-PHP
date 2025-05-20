@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Создать пользователя')
+@section('title', 'Создать пост')
 
 @section('content')
     <h1>Создать новый пост</h1>
