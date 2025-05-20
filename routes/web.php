@@ -3,30 +3,38 @@
 use App\Http\Controllers\Comments\CommentController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Posts\PostController;
+use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('users')->name('users.')->group(function () {
-    Route::get('/', [UserController::class, 'index'])->name('index');
-    Route::get('/create', [UserController::class, 'create'])->name('create');
-    Route::post('/', [UserController::class, 'store'])->name('store');
-    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
-    Route::put('/{user}', [UserController::class, 'update'])->name('update');
-    Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-});
+Route::resource('users', UserController::class)->names([
+    'index' => 'users.index',
+    'create' => 'users.create',
+    'store' => 'users.store',
+    'show' => 'users.show', 
+    'edit' => 'users.edit',
+    'update' => 'users.update',
+    'destroy' => 'users.destroy',
+]);
 
-    Route::prefix('posts')->name('posts.')->group(function () {
-    Route::get('/head', [PostController::class, 'head'])->name('head');
-    Route::resource('/', PostController::class)->except(['create', 'edit']); // Используем ресурсный контроллер
 
-    Route::get('/create', [PostController::class, 'create'])->name('create');
-    Route::get('/{post}/edit', [PostController::class, 'edit'])->name('edit');
+Route::resource('posts', PostController::class)->names([
+    'index' => 'posts.index',
+    'create' => 'posts.create',
+    'store' => 'posts.store',
+    'show' => 'posts.show',
+    'edit' => 'posts.edit',
+    'update' => 'posts.update',
+    'destroy' => 'posts.destroy',
+]);
 
-    Route::post('/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-});
 
-    Route::middleware('auth')->group(function () {
-});
+Route::get('posts/head', [PostController::class, 'head'])->name('posts.head');
+
+
+Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
+
 
 Auth::routes();
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

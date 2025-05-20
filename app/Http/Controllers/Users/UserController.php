@@ -8,51 +8,41 @@ use App\Models\Users\User;
 
 class UserController extends Controller
 {
-    // Отображение списка пользователей
     public function index()
     {
-        $users = User::all(); // Получаем всех пользователей
-        return view('users.index', compact('users')); // Возвращаем представление со списком пользователей
+        $users = User::all();
+        return view('users.index', compact('users'));
     }
 
-    // Отображение формы создания пользователя
     public function create()
     {
-        return view('users.create'); // Возвращаем представление для создания пользователя
+        return view('users.create'); 
     }
 
-    // Сохранение нового пользователя
     public function store(UserRequest $request)
-{
-    try {
-        $data = $request->validated();
-        $data['password'] = bcrypt($data['password']);
-        User::create($data);
-        return redirect()->route('users.index')->with('success', 'Пользователь успешно создан!');
-    } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['error' => $e->getMessage()]); // Показать ошибку
-    }
-}
-
-
-
-    // Отображение формы редактирования пользователя
-    public function edit(User $user)
     {
-        return view('users.create', compact('user')); // Возвращаем представление для редактирования пользователя
+        try {
+            $data = $request->validated();
+            $data['password'] = bcrypt($data['password']);
+            User::create($data);
+            return redirect()->route('users.index')->with('success', 'Пользователь успешно создан!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
 
-    // Обновление информации о пользователе
     public function update(UserRequest $request, User $user)
     {
-        $user->update($request->validated()); // Обновляем информацию о пользователе с валидированными данными
-        return redirect()->route('users.index')->with('success', 'Пользователь успешно обновлён!'); // Перенаправляем с сообщением об успехе
+        $user->update($request->validated());
+        return redirect()->route('users.index')->with('success', 'Пользователь успешно обновлён!');
     }
-
-    // Удаление пользователя
+    public function edit(User $user)
+    {
+        return view('users.create', compact('user')); 
+    }
     public function destroy(User $user)
     {
-        $user->delete(); // Удаляем пользователя
+        $user->delete();
         return redirect()->route('users.index')->with('success', 'Пользователь успешно удалён!'); // Перенаправляем с сообщением об успехе
     }
 }
