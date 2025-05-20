@@ -12,15 +12,22 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return UserResource::collection($users);
+        return view('users.index', compact('users'));
     }
 
-    public function create()
+     public function create()
     {
+        if (!auth()->check() || !auth()->user()->hasRole('administrator')) {
+            return view('users.no-access');
+        }
+
         return view('users.create');
     }
 
-    public function store(UserRequest $request)
+    public function edit(User $user)
+    {
+        return view('users.edit', compact('user'));
+    }    public function store(UserRequest $request)
     {
         $data = $request->validated();
         $data['password'] = bcrypt($data['password']);

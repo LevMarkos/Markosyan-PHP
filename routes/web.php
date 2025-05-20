@@ -6,15 +6,17 @@ use App\Http\Controllers\Posts\PostController;
 use Illuminate\Support\Facades\Route;
 
 // Пользователи
-Route::resource('users', UserController::class)->names([
-    'index' => 'users.index',
-    'create' => 'users.create',
-    'store' => 'users.store',
-    'show' => 'users.show', 
-    'edit' => 'users.edit',
-    'update' => 'users.update',
-    'destroy' => 'users.destroy',
-]);
+Route::group(['middleware' => ['role:administrator']], function () {
+    Route::resource('users', UserController::class)->names([
+        'index' => 'users.index',
+        'create' => 'users.create',
+        'store' => 'users.store',
+        'show' => 'users.show', 
+        'edit' => 'users.edit',
+        'update' => 'users.update',
+        'destroy' => 'users.destroy',
+    ]);
+});
 
 // Посты
 Route::resource('posts', PostController::class)->names([
@@ -31,8 +33,8 @@ Route::resource('posts', PostController::class)->names([
 Route::get('posts/head', [PostController::class, 'head'])->name('posts.head');
 
 // Комментарии
-Route::get('posts/{post}/comments', [CommentController::class, 'index'])->name('posts.comments.index'); // Получение комментариев к посту
-Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store'); // Создание нового комментария
+Route::get('posts/{post}/comments', [CommentController::class, 'index'])->name('posts.comments.index');
+Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
 
 Auth::routes();
 // Главная страница

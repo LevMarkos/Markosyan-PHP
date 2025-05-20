@@ -2,7 +2,6 @@
 
 namespace App\Models\Users;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Comments\Comment;
 use App\Models\Posts\Post;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,12 +10,12 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    use HasFactory, Notifiable;
+
     protected static function newFactory()
     {
-    return \Database\Factories\UserFactory::new();
+        return \Database\Factories\UserFactory::new();
     }
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // Добавлено поле role
     ];
 
     /**
@@ -51,12 +51,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function posts()
     {
         return $this->hasMany(Post::class);
     }
+
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }

@@ -7,17 +7,14 @@ use App\Http\Requests\Posts\PostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Posts\Post;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
     public function index()
-{
-    $posts = Post::with('user')->get();
-    $data = PostResource::collection($posts);
-    return response()->json($data);
-}
-
+    {
+        $posts = Post::with('user')->get();
+        return view('posts.index', compact('posts')); 
+    }
 
     public function create()
     {
