@@ -10,10 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 class Comment extends Model
 {
     use HasFactory;
+
     protected static function newFactory()
     {
-    return \Database\Factories\CommentFactory::new();
+        return \Database\Factories\CommentFactory::new();
     }
+
+    // Указываем, какие поля могут быть массово присвоены
+    protected $fillable = ['content', 'post_id', 'user_id'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

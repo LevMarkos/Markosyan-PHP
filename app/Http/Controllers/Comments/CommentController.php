@@ -4,19 +4,14 @@ namespace App\Http\Controllers\Comments;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Comments\CommentRequest;
-use App\Http\Resources\CommentResource;
 use App\Models\Posts\Post;
-use App\Services\CommentService;
+use App\Jobs\CreateCommentJob;
 use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    protected $commentService;
-
-    public function __construct(CommentService $commentService)
+    public function __construct()
     {
-        $this->commentService = $commentService;
-
         $this->middleware('auth');
     }
 
@@ -27,7 +22,12 @@ class CommentController extends Controller
 
     public function store(CommentRequest $request, Post $post)
     {
-        $comment = $this->commentService->store($request, $post);
-        return redirect()->route('posts.index')->with('success', 'Комментарий успешно добавлен!');
+        // Валидация данных уже происходит в CommentRequest, поэтому можно сразу использовать $request->validated()
+        $validatedData = $request->validated();
+
+        // Диспетчеризация Job для создания комментария
+        CreateCommentJob::dispatch($post->id, $validatedData);
+
+        return redirect()->route('posts.comments.index', $post->id)->with('success', 'Комментарий успешно добавлен!');
     }
 }
