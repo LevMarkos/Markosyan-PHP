@@ -25,8 +25,14 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    @auth
                     <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('posts.index') }}">Посты</a>
+                        </li>
                     </ul>
+                    @endauth
+
                     <ul class="navbar-nav ms-auto">
                         @guest
                             @if (Route::has('login'))
@@ -61,8 +67,9 @@
                                         {{ __('Выход') }}
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="GET" class="d-none">
                                         @csrf
+                                        <input type="hidden" name="redirect" value="{{ route('posts.index') }}">
                                     </form>
                                 </div>
                             </li>

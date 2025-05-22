@@ -15,26 +15,23 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
-     public function create()
+    public function create()
     {
-        if (!auth()->check() || !auth()->user()->hasRole('administrator')) {
-            return view('users.no-access');
-        }
-
         return view('users.create');
     }
 
     public function edit(User $user)
     {
         return view('users.edit', compact('user'));
-    }    public function store(UserRequest $request)
-    {
-        $data = $request->validated();
-        $data['password'] = bcrypt($data['password']);
-        $user = User::create($data);
-
-        return new UserResource($user);
     }
+
+    public function store(UserRequest $request)
+{
+    $data = $request->validated();
+    $data['password'] = bcrypt($data['password']);
+    $user = User::create($data);
+    return redirect()->route('users.index')->with('success', 'Пользователь успешно создан!');
+}
 
     public function update(UserRequest $request, User $user)
     {

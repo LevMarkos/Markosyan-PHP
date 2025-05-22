@@ -10,14 +10,20 @@
                 <img src="{{ $post->getFirstMediaUrl('images') }}" alt="Изображение поста" style="max-width: 100%;">
             @endif
             <p>{{ $post->content }}</p>
-            <button onclick="toggleCommentForm({{ $post->id }})">Добавить комментарий</button>
-            <div id="comment-form-{{ $post->id }}" style="display: none;">
-                <form action="{{ route('comments.store', $post->id) }}" method="POST">
-                    @csrf
-                    <textarea name="content" rows="3" placeholder="Введите ваш комментарий" required></textarea>
-                    <button type="submit">Отправить</button>
-                </form>
-            </div>
+            <a href="{{ route('posts.comments.create', $post->id) }}" class="btn">Добавить комментарий</a>
+
+            <h3>Комментарии:</h3>
+            @if($post->comments->isEmpty())
+                <p>Комментариев нет.</p>
+            @else
+                <ul>
+                    @foreach($post->comments as $comment)
+                        <li>
+                            <strong>{{ $comment->user->name }}</strong>: {{ $comment->content }}
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </div>
     @endforeach
 
@@ -26,11 +32,3 @@
     @endif
 @endsection
 
-@section('scripts')
-    <script>
-        function toggleCommentForm(postId) {
-            const form = document.getElementById(`comment-form-${postId}`);
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        }
-    </script>
-@endsection

@@ -12,15 +12,15 @@ class UserRequest extends FormRequest
     }
 
     public function rules()
-    {
-        $userId = $this->route('user') ? $this->route('user')->id : null;
+{
+    return [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users,email,' . $this->user->id,
+        'password' => 'nullable|string|min:8|confirmed',
+        'role' => 'required|string|in:admin,editor,user',
+    ];
+}
 
-        if ($userId) {
-            return config('validation.update_user')($userId);
-        } else {
-            return config('validation.store_user');
-        }
-    }
 
     public function messages()
     {
@@ -30,10 +30,10 @@ class UserRequest extends FormRequest
             'email.email' => 'Введите корректный email.',
             'email.unique' => 'Этот email уже занят.',
             'password.required' => 'Пароль обязателен для заполнения.',
-            'password.min' => 'Пароль должен содержать минимум 6 символов.',
+            'password.min' => 'Пароль должен содержать минимум 8 символов.',
             'password.confirmed' => 'Подтверждение пароля не совпадает.',
+            'role.required' => 'Роль обязательна для заполнения.',
+            'role.in' => 'Роль должна быть одной из следующих: admin, editor, user.',
         ];
     }
 }
-
-

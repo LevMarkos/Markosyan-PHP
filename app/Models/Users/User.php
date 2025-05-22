@@ -7,6 +7,7 @@ use App\Models\Posts\Post;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Request;
 
 class User extends Authenticatable
 {
@@ -20,19 +21,19 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role', // Добавлено поле role
+        'role',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -40,17 +41,14 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     public function posts()
     {
@@ -62,8 +60,31 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function hasRole($role)
+    /**
+     * 
+     *
+     * @param string|array $role
+     * @return bool
+     */
+    public function hasRole($role): bool
     {
+        if (is_array($role)) {
+            return in_array($this->role, $role);
+        }
+
         return $this->role === $role;
     }
+    public function register(Request $request)
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|confirmed|min:8',
+    ]);
+
+    $validatedData['role'] = 'user';
+
+    $user = User::create($validatedData);
+    
+}
 }

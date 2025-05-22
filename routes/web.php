@@ -4,39 +4,34 @@ use App\Http\Controllers\Comments\CommentController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Posts\PostController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LogoutController;
 
-// Пользователи
-Route::group(['middleware' => ['role:administrator']], function () {
-    Route::resource('users', UserController::class)->names([
-        'index' => 'users.index',
-        'create' => 'users.create',
-        'store' => 'users.store',
-        'show' => 'users.show', 
-        'edit' => 'users.edit',
-        'update' => 'users.update',
-        'destroy' => 'users.destroy',
-    ]);
+// Группировка маршрутов для администраторов
+Route::middleware(['auth'])->group(function () {
+    Route::resource('users', UserController::class)->except(['show']);
 });
 
-// Посты
-Route::resource('posts', PostController::class)->names([
-    'index' => 'posts.index',
-    'create' => 'posts.create',
-    'store' => 'posts.store',
-    'show' => 'posts.show',
-    'edit' => 'posts.edit',
-    'update' => 'posts.update',
-    'destroy' => 'posts.destroy',
-]);
+// Группировка маршрутов для редакторов
+Route::middleware(['auth'])->group(function () {
+    Route::resource('posts', PostController::class)->except(['show']);
+});
 
-// Заголовки постов
-Route::get('posts/head', [PostController::class, 'head'])->name('posts.head');
-
-// Комментарии
-Route::get('posts/{post}/comments', [CommentController::class, 'index'])->name('posts.comments.index');
-Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
-
+// Маршруты аутентификации
 Auth::routes();
+Route::get('/logout', [LogoutController::class, 'logout'])->name('logout');
+
 // Главная страница
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+
+// Страница без доступа
+Route::view('/no-access', 'no-access')->name('no-access');
+
+// Маршруты для комментариев
+Route::middleware(['auth'])->group(function () {
+    Route::get('posts/{post}/comments/create', [CommentController::class, 'create'])->name('posts.comments.create');
+    Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
+    Route::get('posts/{post}/comments', [CommentController::class, 'index'])->name('comments.index');
+});
+
+// Нестандартные маршруты постов
+Route::get('posts/head', [PostController::class, 'head'])->name('posts.head');
