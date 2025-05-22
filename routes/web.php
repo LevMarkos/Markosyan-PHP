@@ -35,3 +35,4 @@ Route::middleware(['auth'])->group(function () {
 
 // Нестандартные маршруты постов
 Route::get('posts/head', [PostController::class, 'head'])->name('posts.head');
+Route::get('/posts/created/{post}', [PostController::class, 'postCreated'])->name('post.created');
